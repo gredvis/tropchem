@@ -18,9 +18,6 @@ Purpose:
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import warnings
-
-warnings.filterwarnings("ignore")
 
 def pbl_evolution(nday=1,lifetime=-1):
     # define some constants
