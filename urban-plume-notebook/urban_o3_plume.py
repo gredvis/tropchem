@@ -33,13 +33,15 @@ Purpose:
 """
 import numpy as np
 from math import exp
+from tkinter.filedialog import asksaveasfilename
+import tkinter as tk 
 import matplotlib.pyplot as plt
 
-def urban_plume(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=30.0,
-                T=303.0,doPlot=True,savePlot=False,doCSV=False,
-                showHOx=False):
+def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
+                T=303.0,doPlot=True,savePlot=False,saveCSV=False,
+                showHOx=True):
     
-    plume = simple_boxmodel(SNOX=SNOX,SROG=SROG,CNOX=CNOX,CROG=CROG,
+    plume = simple_boxmodel(SNOx=SNOx,SROG=SROG,CNOx=CNOx,CROG=CROG,
                             CO3=CO3,T=T)
     
     colors = {}
@@ -60,7 +62,7 @@ def urban_plume(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=30.0,
         ax1.set_xlabel('Distance (km)', fontsize=fs)
         ax1.set_xlim(xlim)
         #ax1.set_ylim(0,160.)
-        ax1.set_ylabel('O$_3$, ROG ($\mu$g m$^{-3}$)', fontsize=fs)
+        ax1.set_ylabel('O$_3$, ROG (ppb)', fontsize=fs)
         ax1.plot(plume['dist'], plume['conc']['O3'],color=colors['O3'],
                  linewidth=lw, label='O$_3$')
         ax1.plot(plume['dist'], plume['conc']['ROG'],color=colors['ROG'],
@@ -74,7 +76,7 @@ def urban_plume(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=30.0,
         ax2.set_xlabel('Distance (km)', fontsize=fs)
         ax2.set_xlim(xlim)
         #ax2.set_ylim(0,30.)
-        ax2.set_ylabel('NO, NO$_2$, HNO$_3$, H$_2$O$_2$ ($\mu$g m$^{-3}$)', 
+        ax2.set_ylabel('NO, NO$_2$, HNO$_3$, H$_2$O$_2$ (ppb)', 
                        fontsize=fs)
         ax2.plot(plume['dist'], plume['conc']['NO'], color=colors['NO'],
                  linewidth=lw, label='NO')
@@ -92,28 +94,35 @@ def urban_plume(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=30.0,
             ax3 = ax1.twinx()  # instantiate a third axis using the same x-axis
             color = 'green'
             #ax3.set_ylim(0,0.2)
-            ax3.set_ylabel('OH, HO$_2$ ($\mu$g m$^{-3}$)', color=color, fontsize=fs)
-            ax3.plot(plume['dist'], plume['conc']['OH']*100,
+            ax3.set_ylabel('OH*100, HO$_2$ (ppt)', color=color, fontsize=fs)
+            ax3.plot(plume['dist'], plume['conc']['OH']*1e3*100,
                      color=colors['OH'],linewidth=lw, label='OH*100')
-            ax3.plot(plume['dist'], plume['conc']['HO2'], color=colors['HO2'],
-                     linewidth=lw, label='HO$_2$')
+            ax3.plot(plume['dist'], plume['conc']['HO2']*1e3, 
+                     color=colors['HO2'],linewidth=lw, label='HO$_2$')
             ax3.tick_params(axis='y', labelcolor=color)
             ax3.legend(bbox_to_anchor=(0.67, 0.86, 0.3, .102), loc=3,
                        ncol=2, mode="expand", borderaxespad=0., fontsize=fs)
-
 
         plt.rcParams['figure.figsize']=(12,10)
         #fig.tight_layout()
         plt.show()
         
         if savePlot:
-            plt.savefig("plume.png")
+            initfile = "SNOX-%6.2f_SROG-%6.2f.png" % (SNOx,SROG)
+            root = tk.Tk()
+            root.withdraw()
+            dlg = asksaveasfilename(title='Select file', 
+                filetypes = (("csv files","*.csv"),("all files","*.*")),
+                initialfile = initfile.replace(' ',''))
+            fname = dlg
+            if fname != '':
+                fig.savefig(fname)
             
         # print minimum and maximum concentrations
         species = ['O3','NO','NO2','ROG','HNO3','H2O2','HO2','OH']
-        sstr = "     "
-        minstr = "Min: "
-        maxstr = "Max: "
+        sstr = "           "
+        minstr = "Min (ppb): "
+        maxstr = "Max (ppb): "
         for i in species:
             sstr = sstr + "%8s" % i
             minstr = minstr+"%8.3f" % min(plume['conc'][i])
@@ -122,8 +131,28 @@ def urban_plume(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=30.0,
         print(minstr)
         print(maxstr)
         
+        if saveCSV:
+            initfile = "SNOX-%6.2f_SROG-%6.2f.csv" % (SNOx,SROG)
+            root = tk.Tk()
+            root.withdraw()
+            dlg = asksaveasfilename(title='Select file', 
+                filetypes = (("csv files","*.csv"),("all files","*.*")),
+                initialfile = initfile.replace(' ',''))
+            fname = dlg
+            if fname != '':
+                # create a numpy array with columns 'dist' and species
+                columns = sorted(plume['conc'].keys())
+                d = np.transpose([plume['conc'][col] for col in columns])
+                # add distance
+                columns = ['dist']+columns
+                d = np.c_[plume['dist'],d]
+                np.savetxt(fname, d[0:7199:40,:], fmt='%10.6f', 
+                           delimiter=';', comments='',
+                           header=';'.join(s.rjust(8) for s in columns))
+            root.destroy()
+        
 
-def simple_boxmodel(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=20.0,T=303.0):
+def simple_boxmodel(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=20.0,T=303.0):
     
     # define some constants
     
@@ -148,22 +177,22 @@ def simple_boxmodel(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=20.0,T=303.0):
     dt = 5.0
     nt = int(tt/dt)
     
-    # concentrations as a dictionary of np arrays
+    # number densities c as a dictionary of np arrays
     species = ['OH','HO2','NO','NO2','O3','ROG','HNO3','H2O2']
     c = {x: np.zeros(nt) for x in species}
     # destruction and production terms
     d = {x: 0.0 for x in species}
     p = {x: 0.0 for x in species}
         
-    # factor eta for converting number density to concentration
+    # factor eta for converting number density to ppb
     # assuming a pressure of 960 hPa
     eta = 1e-8 * 8.314 * T/(6.023*96000)
     
     # inital concentrations
     c['OH'][0] =  0.000 / eta
     c['HO2'][0] = 0.0 / eta
-    c['NO'][0] = 0.4 * CNOX / eta
-    c['NO2'][0] = 0.6 * CNOX / eta
+    c['NO'][0] = 0.4 * CNOx / eta
+    c['NO2'][0] = 0.6 * CNOx / eta
     c['O3'][0] = CO3 / eta
     c['ROG'][0] = CROG / eta
     c['HNO3'][0] = 0.
@@ -175,8 +204,8 @@ def simple_boxmodel(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=20.0,T=303.0):
         # add emissions between times 1000 s and 3000 s
         ct = j*dt
         if ct > 1000 and ct <3000:
-            sNO = 0.8 * SNOX / eta
-            sNO2 = 0.2 * SNOX / eta
+            sNO = 0.8 * SNOx / eta
+            sNO2 = 0.2 * SNOx / eta
             sROG = SROG / eta
         else:
             sNO = 0.
@@ -217,7 +246,7 @@ def simple_boxmodel(SNOX=0.01,SROG=0.08,CNOX=1.0,CROG=4.0,CO3=20.0,T=303.0):
             else:
                 c[i][j+1] = p[i]/d[i]+(c[i][j]-p[i]/d[i])*exp(-d[i]*dt)
     
-    # convert to concentrations
+    # convert to mole fractions (ppb)
     for i in species:
         c[i] = c[i]*eta
         
