@@ -33,8 +33,8 @@ Purpose:
 """
 import numpy as np
 from math import exp
-from tkinter.filedialog import asksaveasfilename
-import tkinter as tk 
+#from tkinter.filedialog import asksaveasfilename
+#import tkinter as tk 
 import matplotlib.pyplot as plt
 
 def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
@@ -109,12 +109,13 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         
         if savePlot:
             initfile = "SNOX-%6.2f_SROG-%6.2f.png" % (SNOx,SROG)
-            root = tk.Tk()
-            root.withdraw()
-            dlg = asksaveasfilename(title='Select file', 
-                filetypes = (("csv files","*.csv"),("all files","*.*")),
-                initialfile = initfile.replace(' ',''))
-            fname = dlg
+            #root = tk.Tk()
+            #root.withdraw()
+            #dlg = asksaveasfilename(title='Select file', 
+            #    filetypes = (("csv files","*.csv"),("all files","*.*")),
+            #    initialfile = initfile.replace(' ',''))
+            #fname = dlg
+            fname = initfile.replace(' ','')
             if fname != '':
                 fig.savefig(fname)
             
@@ -133,12 +134,13 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         
         if saveCSV:
             initfile = "SNOX-%6.2f_SROG-%6.2f.csv" % (SNOx,SROG)
-            root = tk.Tk()
-            root.withdraw()
-            dlg = asksaveasfilename(title='Select file', 
-                filetypes = (("csv files","*.csv"),("all files","*.*")),
-                initialfile = initfile.replace(' ',''))
-            fname = dlg
+            #root = tk.Tk()
+            #root.withdraw()
+            #dlg = asksaveasfilename(title='Select file', 
+            #    filetypes = (("csv files","*.csv"),("all files","*.*")),
+            #    initialfile = initfile.replace(' ',''))
+            #fname = dlg
+            fname = initfile.replace(' ','')
             if fname != '':
                 # create a numpy array with columns 'dist' and species
                 columns = sorted(plume['conc'].keys())
@@ -149,7 +151,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
                 np.savetxt(fname, d[0:7199:40,:], fmt='%10.6f', 
                            delimiter=';', comments='',
                            header=';'.join(s.rjust(8) for s in columns))
-            root.destroy()
+            #root.destroy()
         
 
 def simple_boxmodel(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=20.0,T=303.0):
