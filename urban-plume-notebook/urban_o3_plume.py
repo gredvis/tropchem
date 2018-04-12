@@ -108,14 +108,15 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         plt.show()
         
         if savePlot:
-            initfile = "SNOX-%6.2f_SROG-%6.2f.png" % (SNOx,SROG)
+            #initfile = "SNOX-%6.2f_SROG-%6.2f.png" % (SNOx,SROG)
             #root = tk.Tk()
             #root.withdraw()
             #dlg = asksaveasfilename(title='Select file', 
             #    filetypes = (("csv files","*.csv"),("all files","*.*")),
             #    initialfile = initfile.replace(' ',''))
             #fname = dlg
-            fname = initfile.replace(' ','')
+            #fname = initfile.replace(' ','')
+            fname = "plume.png"
             if fname != '':
                 fig.savefig(fname)
             
@@ -133,14 +134,15 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         print(maxstr)
         
         if saveCSV:
-            initfile = "SNOX-%6.2f_SROG-%6.2f.csv" % (SNOx,SROG)
+            #initfile = "SNOX-%6.2f_SROG-%6.2f.csv" % (SNOx,SROG)
             #root = tk.Tk()
             #root.withdraw()
             #dlg = asksaveasfilename(title='Select file', 
             #    filetypes = (("csv files","*.csv"),("all files","*.*")),
             #    initialfile = initfile.replace(' ',''))
             #fname = dlg
-            fname = initfile.replace(' ','')
+            #fname = initfile.replace(' ','')
+            fname = "plume.csv"
             if fname != '':
                 # create a numpy array with columns 'dist' and species
                 columns = sorted(plume['conc'].keys())
