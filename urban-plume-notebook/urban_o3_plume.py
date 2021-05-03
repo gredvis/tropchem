@@ -73,6 +73,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         ax1.set_ylim(ymin=0)
         y_min, y_max = ax1.get_ylim()
         ax1.fill([5,15,15,5,5],[0,0,y_max,y_max,0],'lightgrey')
+        ax1.text(8,y_max/2,'city',rotation='vertical',fontsize='x-large')
         
         #ax2 = ax1.twinx()  # instantiate a second axis using the same x-axis
         color = 'red'
@@ -95,6 +96,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         ax2.set_ylim(ymin=0)
         y_min, y_max = ax2.get_ylim()
         ax2.fill([5,15,15,5,5],[0,0,y_max,y_max,0],'lightgrey')
+        ax2.text(8,y_max/2,'city',rotation='vertical',fontsize='x-large')
         
         
         if showHOx:
