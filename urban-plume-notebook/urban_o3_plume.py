@@ -70,6 +70,9 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         ax1.tick_params(axis='y')
         ax1.legend(bbox_to_anchor=(0.03, 0.86, 0.3, .102), loc=3,
                    ncol=2, mode="expand", borderaxespad=0., fontsize=fs)
+        ax1.set_ylim(ymin=0)
+        y_min, y_max = ax1.get_ylim()
+        ax1.fill([5,15,15,5,5],[0,0,y_max,y_max,0],'lightgrey')
         
         #ax2 = ax1.twinx()  # instantiate a second axis using the same x-axis
         color = 'red'
@@ -89,6 +92,10 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
         ax2.tick_params(axis='y')
         ax2.legend(bbox_to_anchor=(0.03, 0.76, 0.3, .102), loc=3,
                    ncol=2, mode="expand", borderaxespad=0., fontsize=fs)
+        ax2.set_ylim(ymin=0)
+        y_min, y_max = ax2.get_ylim()
+        ax2.fill([5,15,15,5,5],[0,0,y_max,y_max,0],'lightgrey')
+        
         
         if showHOx:
             ax3 = ax1.twinx()  # instantiate a third axis using the same x-axis
@@ -102,6 +109,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
             ax3.tick_params(axis='y', labelcolor=color)
             ax3.legend(bbox_to_anchor=(0.67, 0.86, 0.3, .102), loc=3,
                        ncol=2, mode="expand", borderaxespad=0., fontsize=fs)
+            ax3.set_ylim(ymin=0)
 
         plt.rcParams['figure.figsize']=(12,10)
         #fig.tight_layout()
@@ -154,7 +162,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
                            delimiter=';', comments='',
                            header=';'.join(s.rjust(8) for s in columns))
             #root.destroy()
-        
+    return plume    
 
 def simple_boxmodel(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=20.0,T=303.0):
     
