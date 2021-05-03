@@ -162,7 +162,7 @@ def urban_plume(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=30.0,
                            delimiter=';', comments='',
                            header=';'.join(s.rjust(8) for s in columns))
             #root.destroy()
-    return plume    
+
 
 def simple_boxmodel(SNOx=0.01,SROG=0.08,CNOx=1.0,CROG=4.0,CO3=20.0,T=303.0):
     
