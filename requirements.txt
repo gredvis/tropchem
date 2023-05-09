@@ -1,0 +1,3 @@
+# Third-party requirements
+matplotlib
+numpy
